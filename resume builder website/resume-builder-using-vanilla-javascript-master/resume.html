@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Resume Builder</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="assets/css/main.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <style>
+            .btn-success {
+                background: linear-gradient(135deg, #28a745, #1e7e34);
+                color: white;
+            }
+            .btn-success:hover {
+                background: linear-gradient(135deg, #1e7e34, #155724);
+                transform: translateY(-2px);
+            }
+            #messageContainer { margin-bottom: 20px; }
+            .success-message {
+                background: linear-gradient(135deg, #d4edda, #c3e6cb);
+                color: #155724;
+                padding: 15px 20px;
+                border-radius: 10px;
+                border-left: 4px solid #28a745;
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+                animation: slideIn 0.3s ease;
+            }
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .loading-overlay {
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex; align-items: center; justify-content: center;
+                z-index: 1000;
+                opacity: 0; visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            .loading-spinner {
+                width: 50px; height: 50px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #667eea;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    </head>
+    <body>
+        <nav class = "navbar bg-white">
+            <div class="container">
+                <div class = "navbar-content">
+                    <div class = "brand-and-toggler">
+                        <a href = "index.html" class = "navbar-brand">
+                            <img src = "assets/images/curriculum-vitae.png" alt = "" class = "navbar-brand-icon">
+                            <span class = "navbar-brand-text">build <span>resume.</span>
+                        </a>
+                        <div class="brand-and-toggler" style="position: relative;">
+                            <button type="button" class="navbar-toggler-btn" onclick="toggleMenu()">
+                              <div class="bars">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                              </div>
+                            </button>
+                            <div class="dropdown-menu" id="navbarMenu">
+                              <ul class="dropdown">
+                                <li class="nav-item"><a class="nav-link" href="">Home</a></li>
+                                <li class="nav-item"><a class="nav-link" href="">About us</a></li>
+                                <li class="nav-item"><a class="nav-link" href="">Service</a></li>
+                                <li class="nav-item"><a class="nav-link" href="">Content</a></li>
+                                <li class="nav-item"><a class="nav-link" href="">Portfolio</a></li>
+                                <div class="icon-drop-down">
+                                  <a href=""><i class="fa-brands fa-facebook"></i></a>
+                                  <a href=""><i class="fa-brands fa-linkedin"></i></a>
+                                  <a href=""><i class="fa-brands fa-twitter"></i></a>
+                                </div>
+                              </ul>
+                            </div>
+                          </div>
+                          
+                    </div>
+                    
+                    <!-- Sign-in Dropdown -->
+                    <div class="auth-dropdown">
+                        <button class="auth-btn" onclick="toggleAuthDropdown()" id="authButton">
+                            <i class="fas fa-user"></i> <span id="authText">Sign In</span>
+                        </button>
+                        <div class="auth-dropdown-content" id="authDropdown">
+                            <!-- Show when not logged in -->
+                            <div id="guestOptions">
+                                <a href="#" onclick="showLoginModal()">Login</a>
+                                <a href="#" onclick="showSignupModal()">Sign Up</a>
+                            </div>
+                            <!-- Show when logged in -->
+                            <div id="userOptions" style="display: none;">
+                                <a href="dashboard.html">My Resumes</a>
+                                <a href="resume.html">Create New Resume</a>
+                                <a href="#" onclick="logout()">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <div class="container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('form')">
+                        <i class="fas fa-edit"></i> Fill Resume
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('customize')">
+                        <i class="fas fa-palette"></i> Customize Design
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="container">
+                <div class="content-wrapper">
+                    <!-- Left Column: Form and Customization (stacked vertically) -->
+                    <div class="left-column">
+                        <div id="messageContainer"></div>
+                        <!-- Form Section -->
+                        <div class="form-section modern-form" id="formSection">
+                            <h2 class="form-title"><i class="fas fa-user-edit"></i> Fill Your Resume</h2>
+                            <form action="" class="cv-form" id="cv-form">
+                                <!-- About Section -->
+                                <div class="cv-form-blk">
+                                    <div class="cv-form-row-title">
+                                        ABOUT
+                                    </div>
+                                    <div class="cv-form-row cv-form-row-about">
+                                        <div class="form-elem modern-form-elem">
+                                            <label class="form-label">First Name</label>
+                                            <input name="firstname" type="text" class="form-control firstname" onkeyup="generateCV()" placeholder="John">
+                                        </div>
+                                        <div class="form-elem modern-form-elem">
+                                            <label class="form-label">Middle Name <span class="opt-text">(optional)</span></label>
+                                            <input name="middlename" type="text" class="form-control middlename" onkeyup="generateCV()" placeholder="">
+                                        </div>
+                                        <div class="form-elem modern-form-elem">
+                                            <label class="form-label">Last Name</label>
+                                            <input name="lastname" type="text" class="form-control lastname" onkeyup="generateCV()" placeholder="Doe">
+                                        </div>
+                                        <div class="form-elem modern-form-elem">
+                                            <label class="form-label">Your Image</label>
+                                            <input name="image" type="file" class="form-control image" accept="image/*" onchange="previewImage()">
+                                        </div>
+                                        <div class="form-elem modern-form-elem">
+                                            <label class="form-label">Designation</label>
+                                            <input name="designation" type="text" class="form-control designation" onkeyup="generateCV()" placeholder="Senior Developer">
+                                        </div>
+                                        <div class="form-elem modern-form-elem">
+                                            <label class="form-label">Address</label>
+                                            <input name="address" type="text" class="form-control address" onkeyup="generateCV()" placeholder="New York, NY">
+                                        </div>
+                                        <div class="form-elem modern-form-elem">
+                                            <label class="form-label">Email</label>
+                                            <input name="email" type="text" class="form-control email" onkeyup="generateCV()" placeholder="john.doe@email.com">
+                                        </div>
+                                        <div class="form-elem modern-form-elem">
+                                            <label class="form-label">Phone No:</label>
+                                            <input name="phoneno" type="text" class="form-control phoneno" onkeyup="generateCV()" placeholder="(555) 123-4567">
+                                        </div>
+                                        <div class="form-elem modern-form-elem">
+                                            <label class="form-label">Summary</label>
+                                            <textarea name="summary" class="form-control summary" onkeyup="generateCV()" placeholder="Brief professional summary" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Achievements Section -->
+                                <div class="cv-form-blk">
+                                    <div class="cv-form-row-title">ACHIEVEMENTS</div>
+                                    <div class="row-separator repeater">
+                                        <div class="repeater" data-repeater-list="group-a">
+                                            <div data-repeater-item>
+                                                <div class="repeater-item-content">
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Title</label>
+                                                        <input name="achieve_title" type="text" class="form-control achieve_title" onkeyup="generateCV()" placeholder="Employee of the Year">
+                                                    </div>
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Description</label>
+                                                        <textarea name="achieve_description" class="form-control achieve_description" onkeyup="generateCV()" placeholder="Description of achievement" rows="2"></textarea>
+                                                    </div>
+                                                    <button data-repeater-delete type="button" class="repeater-remove-btn">Remove Achievement</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" data-repeater-create value="Add" class="repeater-add-btn">+ Add Achievement</button>
+                                    </div>
+                                </div>
+                                <!-- Experience Section -->
+                                <div class="cv-form-blk">
+                                    <div class="cv-form-row-title">EXPERIENCE</div>
+                                    <div class="row-separator repeater">
+                                        <div class="repeater" data-repeater-list="group-b">
+                                            <div data-repeater-item>
+                                                <div class="repeater-item-content">
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Job Title</label>
+                                                        <input name="exp_title" type="text" class="form-control exp_title" onkeyup="generateCV()" placeholder="Software Engineer">
+                                                    </div>
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Company / Organization</label>
+                                                        <input name="exp_organization" type="text" class="form-control exp_organization" onkeyup="generateCV()" placeholder="Tech Company Inc.">
+                                                    </div>
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Location</label>
+                                                        <input name="exp_location" type="text" class="form-control exp_location" onkeyup="generateCV()" placeholder="San Francisco, CA">
+                                                    </div>
+                                                    <div class="date-group">
+                                                        <div class="form-elem modern-form-elem">
+                                                            <label class="form-label">Start Date</label>
+                                                            <input name="exp_start_date" type="date" class="form-control exp_start_date" onkeyup="generateCV()">
+                                                        </div>
+                                                        <div class="form-elem modern-form-elem">
+                                                            <label class="form-label">End Date</label>
+                                                            <input name="exp_end_date" type="date" class="form-control exp_end_date" onkeyup="generateCV()">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Description</label>
+                                                        <textarea name="exp_description" class="form-control exp_description" onkeyup="generateCV()" placeholder="Job responsibilities and achievements" rows="3"></textarea>
+                                                    </div>
+                                                    <button data-repeater-delete type="button" class="repeater-remove-btn">Remove Experience</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" data-repeater-create value="Add" class="repeater-add-btn">+ Add Experience</button>
+                                    </div>
+                                </div>
+                                <!-- Education Section -->
+                                <div class="cv-form-blk">
+                                    <div class="cv-form-row-title">EDUCATION</div>
+                                    <div class="row-separator repeater">
+                                        <div class="repeater" data-repeater-list="group-c">
+                                            <div data-repeater-item>
+                                                <div class="repeater-item-content">
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">School</label>
+                                                        <input name="edu_school" type="text" class="form-control edu_school" onkeyup="generateCV()" placeholder="University of Technology">
+                                                    </div>
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Degree</label>
+                                                        <input name="edu_degree" type="text" class="form-control edu_degree" onkeyup="generateCV()" placeholder="Bachelor of Science">
+                                                    </div>
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">City</label>
+                                                        <input name="edu_city" type="text" class="form-control edu_city" onkeyup="generateCV()" placeholder="New York">
+                                                    </div>
+                                                    <div class="date-group">
+                                                        <div class="form-elem modern-form-elem">
+                                                            <label class="form-label">Start Date</label>
+                                                            <input name="edu_start_date" type="date" class="form-control edu_start_date" onkeyup="generateCV()">
+                                                        </div>
+                                                        <div class="form-elem modern-form-elem">
+                                                            <label class="form-label">End Date</label>
+                                                            <input name="edu_graduation_date" type="date" class="form-control edu_graduation_date" onkeyup="generateCV()">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Description</label>
+                                                        <textarea name="edu_description" class="form-control edu_description" onkeyup="generateCV()" placeholder="Major, GPA, relevant coursework" rows="2"></textarea>
+                                                    </div>
+                                                    <button data-repeater-delete type="button" class="repeater-remove-btn">Remove Education</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" data-repeater-create value="Add" class="repeater-add-btn">+ Add Education</button>
+                                    </div>
+                                </div>
+                                <!-- Projects Section -->
+                                <div class="cv-form-blk">
+                                    <div class="cv-form-row-title">PROJECTS</div>
+                                    <div class="row-separator repeater">
+                                        <div class="repeater" data-repeater-list="group-d">
+                                            <div data-repeater-item>
+                                                <div class="repeater-item-content">
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Project Name</label>
+                                                        <input name="proj_title" type="text" class="form-control proj_title" onkeyup="generateCV()" placeholder="E-commerce Website">
+                                                    </div>
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Project Link</label>
+                                                        <input name="proj_link" type="text" class="form-control proj_link" onkeyup="generateCV()" placeholder="https://github.com/username/project">
+                                                    </div>
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Description</label>
+                                                        <textarea name="proj_description" class="form-control proj_description" onkeyup="generateCV()" placeholder="Technologies used and project details" rows="3"></textarea>
+                                                    </div>
+                                                    <button data-repeater-delete type="button" class="repeater-remove-btn">Remove Project</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" data-repeater-create value="Add" class="repeater-add-btn">+ Add Project</button>
+                                    </div>
+                                </div>
+                                <!-- Skills Section -->
+                                <div class="cv-form-blk">
+                                    <div class="cv-form-row-title">SKILLS</div>
+                                    <div class="row-separator repeater">
+                                        <div class="repeater" data-repeater-list="group-e">
+                                            <div data-repeater-item>
+                                                <div class="repeater-item-content">
+                                                    <div class="form-elem modern-form-elem">
+                                                        <label class="form-label">Skill</label>
+                                                        <input name="skill" type="text" class="form-control skill" onkeyup="generateCV()" placeholder="JavaScript">
+                                                    </div>
+                                                    <button data-repeater-delete type="button" class="repeater-remove-btn">Remove Skill</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" data-repeater-create value="Add" class="repeater-add-btn">+ Add Skill</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Customization Section -->
+                        <div class="customization-section" id="customizationSection" style="display: none;">
+                            <div class="customization-panel-full">
+                                <h3><i class="fas fa-palette"></i> Customize Your Resume Design</h3>
+                                <div class="template-options">
+                                    <h4>Template Layout</h4>
+                                    <div class="template-option">
+                                        <input type="radio" id="template1" name="template" value="template-left-sidebar" checked onchange="changeTemplate(this.value)">
+                                        <label for="template1">Sidebar Left</label>
+                                    </div>
+                                    <div class="template-option">
+                                        <input type="radio" id="template2" name="template" value="template-centered-header" onchange="changeTemplate(this.value)">
+                                        <label for="template2">Centered Header</label>
+                                    </div>
+                                </div>
+                                <div class="color-options">
+                                    <h4>Color Theme</h4>
+                                    <div class="color-option color-green active" onclick="changeColor('theme-green')"></div>
+                                    <div class="color-option color-blue" onclick="changeColor('theme-blue')"></div>
+                                    <div class="color-option color-purple" onclick="changeColor('theme-purple')"></div>
+                                    <div class="color-option color-orange" onclick="changeColor('theme-orange')"></div>
+                                    <div class="color-option color-red" onclick="changeColor('theme-red')"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right Column: Preview -->
+                    <div class="preview-section">
+                        <div class="preview-header">
+                            <h3>Live Preview</h3>
+                            <div class="preview-actions">
+                                <button type="button" id="zoom-btn" class="btn btn-secondary" onclick="toggleZoom()">
+                                    <i class="fas fa-search-plus"></i>
+                                    <span class="zoom-text">Zoom In</span>
+                                </button>
+                                <button type="button" class="btn btn-success" onclick="saveDraft()">
+                                    <i class="fas fa-save"></i> Save Draft
+                                </button>
+                                <button type="button" class="print-btn btn btn-primary" onclick="printCV()">
+                                    <i class="fas fa-print"></i> Print CV
+                                </button>
+                            </div>
+                        </div>
+                        <div class="preview-container">
+                            <section id="preview-sc" class="print_area">
+                                <div class="preview-cnt">
+                                    <div class="preview-cnt-l bg-green text-white">
+                                        <div class="preview-blk">
+                                            <div class="preview-image">
+                                                <img src="" alt="" id="image_dsp"> 
+                                            </div>
+                                            <div class="preview-item preview-item-name">
+                                                <span class="preview-item-val fw-6" id="fullname_dsp"></span>
+                                            </div>
+                                            <div class="preview-item">
+                                                <span class="preview-item-val text-uppercase fw-6 ls-1" id="designation_dsp"></span>
+                                            </div>
+                                        </div>
+                                        <div class="preview-blk">
+                                            <div class="preview-blk-title"><h3>about</h3></div>
+                                            <div class="preview-blk-list">
+                                                <div class="preview-item"><span class="preview-item-val" id="phoneno_dsp"></span></div>
+                                                <div class="preview-item"><span class="preview-item-val" id="email_dsp"></span></div>
+                                                <div class="preview-item"><span class="preview-item-val" id="address_dsp"></span></div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-blk">
+                                            <div class="preview-blk-title"><h3>skills</h3></div>
+                                            <div class="skills-items preview-blk-list" id="skills_dsp"></div>
+                                        </div>
+                                    </div>
+                                    <div class="preview-cnt-r bg-white">
+                                        <div class="preview-blk">
+                                            <div class="preview-blk-title"><h3>Summary</h3></div>
+                                            <div class="preview-blk-list"><p id="summary_dsp"></p></div>
+                                        </div>
+                                        <div class="preview-blk"><div class="preview-blk-title"><h3>Achievements</h3></div><div class="achievements-items preview-blk-list" id="achievements_dsp"></div></div>
+                                        <div class="preview-blk"><div class="preview-blk-title"><h3>Experiences</h3></div><div class="experiences-items preview-blk-list" id="experiences_dsp"></div></div>
+                                        <div class="preview-blk"><div class="preview-blk-title"><h3>Education</h3></div><div class="educations-items preview-blk-list" id="educations_dsp"></div></div>
+                                        <div class="preview-blk"><div class="preview-blk-title"><h3>Projects</h3></div><div class="projects-items preview-blk-list" id="projects_dsp"></div></div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
+                <h2>Login</h2>
+                <form id="loginForm">
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+                <p style="text-align: center; margin-top: 15px;">
+                    Don't have an account? <a href="#" onclick="closeModal('loginModal'); showSignupModal()">Sign Up</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Signup Modal -->
+        <div id="signupModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('signupModal')">&times;</span>
+                <h2>Sign Up</h2>
+                <form id="signupForm">
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <input type="password" placeholder="Confirm Password" required>
+                    <button type="submit">Sign Up</button>
+                </form>
+                <p style="text-align: center; margin-top: 15px;">
+                    Already have an account? <a href="#" onclick="closeModal('signupModal'); showLoginModal()">Login</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <!-- jquery cdn -->
+        <script src="https://code.jquery.com/jquery-3.6.4.js" crossorigin="anonymous"></script>
+        <!-- jquery repeater cdn -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <!-- custom js -->
+        <script src = "assets/js/script.js"></script>
+        <!-- app js -->
+        <script src="assets/js/app.js"></script>
+        <!-- customization js -->
+        <script src="assets/js/customization.js"></script>
+
+        <script>
+            // This script will run on page load to check for resume data and populate the form
+            document.addEventListener('DOMContentLoaded', function() {
+                const resumeDataJSON = localStorage.getItem('resumeToEdit');
+                if (resumeDataJSON) {
+                    try {
+                        const resumeData = JSON.parse(resumeDataJSON);
+                        populateFormWithData(resumeData);
+                    } catch (error) {
+                        console.error('Failed to parse resume data:', error);
+                    } finally {
+                        // Clear the data from localStorage so it's not used again
+                        localStorage.removeItem('resumeToEdit');
+                    }
+                }
+            });
+
+            function populateFormWithData(data) {
+                if (!data) return;
+
+                const form = document.getElementById('cv-form');
+
+                // Populate simple text fields
+                form.querySelector('.firstname').value = data.firstname || '';
+                form.querySelector('.lastname').value = data.lastname || '';
+                form.querySelector('.designation').value = data.designation || '';
+                form.querySelector('.address').value = data.address || '';
+                form.querySelector('.email').value = data.email || '';
+                form.querySelector('.phoneno').value = data.phoneno || '';
+                form.querySelector('.summary').value = data.summary || '';
+
+                // Populate repeater fields using the jQuery Repeater's setList method
+                if (data.achievements && data.achievements.length > 0) {
+                    $('[data-repeater-list="group-a"]').closest('.repeater').repeater().setList(data.achievements);
+                }
+                if (data.experiences && data.experiences.length > 0) {
+                    $('[data-repeater-list="group-b"]').closest('.repeater').repeater().setList(data.experiences);
+                }
+                if (data.educations && data.educations.length > 0) {
+                    $('[data-repeater-list="group-c"]').closest('.repeater').repeater().setList(data.educations);
+                }
+                if (data.projects && data.projects.length > 0) {
+                    $('[data-repeater-list="group-d"]').closest('.repeater').repeater().setList(data.projects);
+                }
+                if (data.skills && data.skills.length > 0) {
+                    $('[data-repeater-list="group-e"]').closest('.repeater').repeater().setList(data.skills);
+                }
+
+                // Update the live preview with the new data
+                generateCV();
+            }
+        </script>
+        <script>
+            function saveDraft() {
+                showMessage('Saving your draft...', 'success');
+                showLoading();
+
+                setTimeout(() => {
+                    hideLoading();
+                    showMessage('Draft saved successfully! Redirecting to dashboard.', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                }, 2000);
+            }
+
+            function showLoading() {
+                document.getElementById('loadingOverlay').style.opacity = '1';
+                document.getElementById('loadingOverlay').style.visibility = 'visible';
+            }
+
+            function hideLoading() {
+                document.getElementById('loadingOverlay').style.opacity = '0';
+                document.getElementById('loadingOverlay').style.visibility = 'hidden';
+            }
+
+            function showMessage(message, type) {
+                const container = document.getElementById('messageContainer');
+                const div = document.createElement('div');
+                div.className = 'success-message';
+                div.textContent = message;
+                container.innerHTML = '';
+                container.appendChild(div);
+
+                setTimeout(() => {
+                    if (div.parentNode) {
+                        div.style.opacity = '0';
+                        setTimeout(() => div.remove(), 300);
+                    }
+                }, 4000);
+            }
+
+            function toggleMenu() {
+                const menu = document.getElementById('navbarMenu');
+                if (menu.style.display === 'block') {
+                    menu.style.display = 'none';
+                } else {
+                    menu.style.display = 'block';
+                }
+            }
+            
+            function toggleAuthDropdown() {
+                const dropdown = document.getElementById('authDropdown');
+                dropdown.classList.toggle('show');
+            }
+
+            function showLoginModal() {
+                document.getElementById('loginModal').style.display = 'block';
+                document.getElementById('authDropdown').classList.remove('show');
+            }
+
+            function showSignupModal() {
+                document.getElementById('signupModal').style.display = 'block';
+                document.getElementById('authDropdown').classList.remove('show');
+            }
+
+            function closeModal(modalId) {
+                document.getElementById(modalId).style.display = 'none';
+            }
+
+            // Check authentication state on page load
+            function checkAuthState() {
+                const token = localStorage.getItem('token');
+                const user = localStorage.getItem('user');
+                
+                const authText = document.getElementById('authText');
+                const guestOptions = document.getElementById('guestOptions');
+                const userOptions = document.getElementById('userOptions');
+                
+                if (token && user) {
+                    try {
+                        const userData = JSON.parse(user);
+                        authText.textContent = userData.name || 'User';
+                        guestOptions.style.display = 'none';
+                        userOptions.style.display = 'block';
+                    } catch (error) {
+                        console.error('Error parsing user data:', error);
+                        // If there's an error, treat as not logged in
+                        authText.textContent = 'Sign In';
+                        guestOptions.style.display = 'block';
+                        userOptions.style.display = 'none';
+                    }
+                } else {
+                    authText.textContent = 'Sign In';
+                    guestOptions.style.display = 'block';
+                    userOptions.style.display = 'none';
+                }
+            }
+
+            // Logout function
+            function logout() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                checkAuthState();
+                document.getElementById('authDropdown').classList.remove('show');
+                // Redirect to home page
+                window.location.href = 'index.html';
+            }
+
+            // Close dropdown when clicking outside
+            window.onclick = function(event) {
+                if (!event.target.matches('.auth-btn')) {
+                    const dropdowns = document.getElementsByClassName('auth-dropdown-content');
+                    for (let dropdown of dropdowns) {
+                        if (dropdown.classList.contains('show')) {
+                            dropdown.classList.remove('show');
+                        }
+                    }
+                }
+                
+                // Close modals when clicking outside
+                const modals = document.getElementsByClassName('modal');
+                for (let modal of modals) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                }
+            }
+
+            // Handle form submissions
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Add login logic here
+                alert('Login functionality will be implemented here');
+                closeModal('loginModal');
+            });
+
+            document.getElementById('signupForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Add signup logic here
+                alert('Signup functionality will be implemented here');
+                closeModal('signupModal');
+            });
+
+            // Initialize auth state when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                checkAuthState();
+            });
+        </script> 
+    </body>
+</html> 

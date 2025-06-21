@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Manager Resume Preview</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body {
+            background-color: #eef1f5;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        .preview-header {
+            width: 100%;
+            max-width: 816px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .preview-header h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .preview-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .btn {
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        #preview-sc {
+            width: 816px;
+            min-height: 1056px;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            transform: scale(1);
+        }
+        /* Using Centered Header Template Styles */
+        #preview-sc.template-centered-header .preview-cnt {
+            display: flex;
+            flex-direction: column;
+        }
+        #preview-sc.template-centered-header .preview-cnt-l {
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+            background-color: var(--sidebar-bg, #1a91f0);
+            color: var(--sidebar-text, #fff);
+        }
+        #preview-sc.template-centered-header .preview-cnt-r {
+            padding: 40px;
+        }
+        #preview-sc.template-centered-header .preview-item-name::after {
+            display: none;
+        }
+        #preview-sc.template-centered-header .preview-blk-title h3 {
+            background-color: transparent;
+            color: var(--primary-color, #007bff);
+            padding: 0;
+        }
+        #preview-sc.template-centered-header .skills_dsp {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        #preview-sc.template-centered-header .skills_dsp li {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="preview-header">
+        <h1>Resume Preview</h1>
+        <div class="preview-actions">
+            <a href="resume.html" class="btn btn-primary"><i class="fas fa-edit"></i> Edit This Resume</a>
+            <a href="dashboard.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
+    </div>
+
+    <section id="preview-sc" class="print_area template-centered-header theme-blue">
+        <div class="preview-cnt">
+            <div class="preview-cnt-l">
+                <div class="preview-blk">
+                    <div class="preview-item preview-item-name">
+                        <span class="preview-item-val fw-6" style="font-size: 2.5rem;">Sarah Chambers</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-item-val text-uppercase fw-6 ls-1" style="font-size: 1.2rem;">Senior Marketing Manager</span>
+                    </div>
+                </div>
+                <div class="preview-blk">
+                    <div class="preview-blk-list" style="display: flex; justify-content: center; gap: 20px; margin-top: 15px;">
+                        <div class="preview-item"><span class="preview-item-val"><i class="fas fa-phone"></i> 312-555-0199</span></div>
+                        <div class="preview-item"><span class="preview-item-val"><i class="fas fa-envelope"></i> sarah.chambers@example.com</span></div>
+                        <div class="preview-item"><span class="preview-item-val"><i class="fas fa-map-marker-alt"></i> Chicago, IL</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="preview-cnt-r">
+                <div class="preview-blk">
+                    <div class="preview-blk-title"><h3>Summary</h3></div>
+                    <div class="preview-blk-list">
+                        <p>Results-driven Marketing Manager with over 10 years of experience in developing and executing successful marketing strategies. Proven ability to drive brand growth and increase market share.</p>
+                    </div>
+                </div>
+                <div class="preview-blk">
+                    <div class="preview-blk-title"><h3>Skills</h3></div>
+                    <ul class="skills-items preview-blk-list skills_dsp">
+                        <li>Digital Marketing & SEO</li>
+                        <li>Content Strategy</li>
+                        <li>Team Leadership</li>
+                        <li>Budget Management</li>
+                        <li>Google Analytics</li>
+                        <li>CRM (Salesforce)</li>
+                    </ul>
+                </div>
+                <div class="preview-blk">
+                    <div class="preview-blk-title"><h3>Achievements</h3></div>
+                    <div class="achievements-items preview-blk-list">
+                        <div class="preview-item">
+                            <h4>Marketer of the Year</h4>
+                            <p>Awarded for leading a campaign that resulted in a 40% increase in lead generation.</p>
+                        </div>
+                        <div class="preview-item">
+                            <h4>Top Campaign Award</h4>
+                            <p>Received national recognition for the "Innovate & Elevate" product launch campaign.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-blk">
+                    <div class="preview-blk-title"><h3>Experiences</h3></div>
+                    <div class="experiences-items preview-blk-list">
+                        <div class="preview-item">
+                            <h4>Senior Marketing Manager</h4>
+                            <p><strong>Innovatech Solutions</strong> | Chicago, IL | Jun 2018 - May 2024</p>
+                            <p>Led a team of 10 marketers. Developed and managed a $2M annual marketing budget. Increased website traffic by 150% through targeted SEO and content marketing initiatives.</p>
+                        </div>
+                        <div class="preview-item">
+                            <h4>Marketing Specialist</h4>
+                            <p><strong>Digital Growth Agency</strong> | Chicago, IL | Jul 2014 - May 2018</p>
+                            <p>Managed social media accounts, growing the follower base by 300K. Created and executed email marketing campaigns with an average open rate of 25%.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-blk">
+                    <div class="preview-blk-title"><h3>Education</h3></div>
+                    <div class="educations-items preview-blk-list">
+                        <div class="preview-item">
+                            <h4>B.S. in Marketing</h4>
+                            <p><strong>University of Illinois</strong> | Urbana-Champaign | Sep 2010 - May 2014</p>
+                            <p>Graduated with Magna Cum Laude honors. Active member of the American Marketing Association.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-blk">
+                    <div class="preview-blk-title"><h3>Projects</h3></div>
+                    <div class="projects-items preview-blk-list">
+                        <div class="preview-item">
+                            <h4><a href="#">Global Rebranding Initiative</a></h4>
+                            <p>Led the complete rebranding of Innovatech Solutions, including a new website, logo, and marketing collateral, resulting in a 25% increase in brand recognition.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html> 

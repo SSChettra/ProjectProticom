@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Resumes - Resume Builder</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .demo-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .demo-banner i {
+            font-size: 1.2rem;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .user-info .welcome {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-info .logout-btn {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .user-info .logout-btn:hover {
+            background: linear-gradient(135deg, #c82333, #a71e2a);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .resumes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+        }
+
+        .resume-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resume-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .resume-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .resume-card h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .resume-meta {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .resume-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn i {
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #1e7e34, #155724);
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #e0a800, #d39e00);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333, #a71e2a);
+            transform: translateY(-2px);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .resumes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .resume-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Resume Builder</h2>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section (matching home page) -->
+    <header class="header bg-bright" id="header">
+        <div class="container">
+            <div class="header-content text-center">
+                <h6 class="text-uppercase text-blue-dark fs-14 fw-6 ls-1">resume dashboard</h6>
+                <h1 class="lg-title">Manage and Access All Your Professional Resumes</h1>
+                <p class="text-dark fs-18">View, edit, download, and organize all your created resumes in one convenient place. Your professional journey starts here!</p>
+                <div class="header-buttons">
+                    <a href="resume.html" class="btn btn-primary text-uppercase">create new resume</a>
+                    <a href="index.html" class="btn btn-secondary text-uppercase">back to home</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="demo-banner">
+            <i class="fas fa-lightbulb"></i>
+            <strong>Pro Tip:</strong> Regularly update your resumes to keep them fresh for new opportunities!
+        </div>
+
+        <!-- User Info Section -->
+        <div class="user-info">
+            <div class="welcome">
+                Welcome back, <span id="userName">Valued User</span>!
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- Messages -->
+        <div id="messageContainer"></div>
+
+        <!-- Resumes Grid -->
+        <div id="resumesGrid" class="resumes-grid">
+            <div class="resume-card">
+                <h3>Software Developer Resume</h3>
+                <div class="resume-meta">
+                    <div><i class="fas fa-calendar"></i> Created: January 15, 2025</div>
+                    <div><i class="fas fa-edit"></i> Last Updated: January 20, 2025</div>
+                    <div><i class="fas fa-palette"></i> Template: Sidebar Left</div>
+                </div>
+                <div class="resume-actions">
+                    <button class="btn btn-primary" onclick="editResume('Software Developer')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-success" onclick="downloadResume('Software Developer')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn btn-warning" onclick="duplicateResume('Software Developer')">
+                        <i class="fas fa-copy"></i> Duplicate
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteResume('Software Developer')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+
+            <div class="resume-card">
+                <h3>Marketing Manager CV</h3>
+                <div class="resume-meta">
+                    <div><i class="fas fa-calendar"></i> Created: January 10, 2025</div>
+                    <div><i class="fas fa-edit"></i> Last Updated: January 18, 2025</div>
+                    <div><i class="fas fa-palette"></i> Template: Centered Header</div>
+                </div>
+                <div class="resume-actions">
+                    <button class="btn btn-primary" onclick="editResume('Marketing Manager')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-success" onclick="downloadResume('Marketing Manager')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn btn-warning" onclick="duplicateResume('Marketing Manager')">
+                        <i class="fas fa-copy"></i> Duplicate
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteResume('Marketing Manager')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+
+            <div class="resume-card">
+                <h3>UX Designer Portfolio</h3>
+                <div class="resume-meta">
+                    <div><i class="fas fa-calendar"></i> Created: January 5, 2025</div>
+                    <div><i class="fas fa-edit"></i> Last Updated: January 12, 2025</div>
+                    <div><i class="fas fa-palette"></i> Template: Sidebar Left</div>
+                </div>
+                <div class="resume-actions">
+                    <button class="btn btn-primary" onclick="editResume('UX Designer')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-success" onclick="downloadResume('UX Designer')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn btn-warning" onclick="duplicateResume('UX Designer')">
+                        <i class="fas fa-copy"></i> Duplicate
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteResume('UX Designer')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+
+            <div class="resume-card">
+                <h3>Data Scientist Resume</h3>
+                <div class="resume-meta">
+                    <div><i class="fas fa-calendar"></i> Created: December 28, 2024</div>
+                    <div><i class="fas fa-edit"></i> Last Updated: January 8, 2025</div>
+                    <div><i class="fas fa-palette"></i> Template: Centered Header</div>
+                </div>
+                <div class="resume-actions">
+                    <button class="btn btn-primary" onclick="editResume('Data Scientist')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-success" onclick="downloadResume('Data Scientist')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn btn-warning" onclick="duplicateResume('Data Scientist')">
+                        <i class="fas fa-copy"></i> Duplicate
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteResume('Data Scientist')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+
+            <div class="resume-card">
+                <h3>Project Manager CV</h3>
+                <div class="resume-meta">
+                    <div><i class="fas fa-calendar"></i> Created: December 20, 2024</div>
+                    <div><i class="fas fa-edit"></i> Last Updated: January 2, 2025</div>
+                    <div><i class="fas fa-palette"></i> Template: Sidebar Left</div>
+                </div>
+                <div class="resume-actions">
+                    <button class="btn btn-primary" onclick="editResume('Project Manager')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-success" onclick="downloadResume('Project Manager')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn btn-warning" onclick="duplicateResume('Project Manager')">
+                        <i class="fas fa-copy"></i> Duplicate
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteResume('Project Manager')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+
+            <div class="resume-card">
+                <h3>Content Writer Resume</h3>
+                <div class="resume-meta">
+                    <div><i class="fas fa-calendar"></i> Created: December 15, 2024</div>
+                    <div><i class="fas fa-edit"></i> Last Updated: December 30, 2024</div>
+                    <div><i class="fas fa-palette"></i> Template: Centered Header</div>
+                </div>
+                <div class="resume-actions">
+                    <button class="btn btn-primary" onclick="editResume('Content Writer')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-success" onclick="downloadResume('Content Writer')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn btn-warning" onclick="duplicateResume('Content Writer')">
+                        <i class="fas fa-copy"></i> Duplicate
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteResume('Content Writer')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.opacity = '1';
+            document.getElementById('loadingOverlay').style.visibility = 'visible';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.opacity = '0';
+            document.getElementById('loadingOverlay').style.visibility = 'hidden';
+        }
+
+        function editResume(resumeName) {
+            showMessage(`Opening ${resumeName} resume for editing...`, 'success');
+            showLoading();
+
+            let resumeData = {};
+
+            // If the resume is "Marketing Manager", set its data in localStorage
+            if (resumeName === 'Marketing Manager') {
+                resumeData = {
+                    firstname: 'Sarah', middlename: 'L.', lastname: 'Chambers', image: 'assets/images/profile-image.jpg', designation: 'Senior Marketing Manager', address: '123 Marketing Ave, Chicago, IL 60611', email: 'sarah.l.chambers@example.com', phoneno: '312-555-0199', summary: 'A highly accomplished and results-oriented Senior Marketing Manager with over a decade of experience in building brand awareness, driving revenue growth, and leading high-performing teams. Expert in creating and executing integrated marketing strategies across digital and traditional channels. Passionate about leveraging data analytics to optimize campaign performance and deliver measurable ROI.',
+                    achievements: [ { achieve_title: 'Marketer of the Year 2022', achieve_description: 'Awarded by Innovatech Solutions for leading a national campaign that resulted in a 40% increase in qualified lead generation and a 15% growth in sales.' }, { achieve_title: 'Top Campaign Award (Gold)', achieve_description: 'Received national recognition from the American Marketing Association for the "Innovate & Elevate" product launch, which exceeded market share projections by 20%.' }, { achieve_title: 'Social Media Excellence 2020', achieve_description: 'Grew organic social media engagement by 300% across all platforms through a new content strategy and community management initiative.'} ],
+                    experiences: [ { exp_title: 'Senior Marketing Manager', exp_organization: 'Innovatech Solutions', exp_location: 'Chicago, IL', exp_start_date: '2018-06-01', exp_end_date: '2024-05-31', exp_description: '- Led a team of 10 marketing professionals, fostering a collaborative and data-driven culture.\n- Developed and managed a $2M annual marketing budget, reallocating funds to high-ROI digital channels.\n- Increased website traffic by 150% and organic search rankings for 50+ keywords through targeted SEO and content marketing strategies.' }, { exp_title: 'Marketing Specialist', exp_organization: 'Digital Growth Agency', exp_location: 'Chicago, IL', exp_start_date: '2014-07-01', exp_end_date: '2018-05-31', exp_description: '- Managed social media accounts for 15+ clients, growing combined follower base by over 300K.\n- Created and executed email marketing campaigns with an average open rate of 25% and a click-through rate of 5%.\n- Assisted in developing marketing plans that increased client retention by 30%.' } ],
+                    educations: [ { edu_school: 'University of Illinois Urbana-Champaign', edu_degree: 'B.S. in Marketing', edu_city: 'Urbana-Champaign, IL', edu_start_date: '2010-09-01', edu_end_date: '2014-05-31', edu_description: 'Graduated with Magna Cum Laude honors (GPA: 3.8/4.0). President of the collegiate chapter of the American Marketing Association.' } ],
+                    projects: [ { proj_title: 'Global Rebranding Initiative', proj_link: 'https://example.com/rebrand-case-study', proj_description: 'Led the complete rebranding of Innovatech Solutions, including a new website, logo, and marketing collateral. The project was completed on time, under budget, and resulted in a 25% increase in unaided brand recognition.' }, { proj_title: 'Annual Tech Summit 2023', proj_link: 'https://example.com/tech-summit-2023', proj_description: 'Organized and promoted a virtual tech summit for 5,000+ attendees, securing 30 industry-leading speakers and generating over 500 qualified sales leads.'} ],
+                    skills: [ { skill: 'Digital Marketing & SEO' }, { skill: 'Content Strategy & Creation' }, { skill: 'Team Leadership & Mentoring' }, { skill: 'Marketing Analytics & ROI' }, { skill: 'Budget Management (P&L)' }, { skill: 'CRM (Salesforce, HubSpot)' }, { skill: 'Email Marketing (Mailchimp)' }, { skill: 'Social Media Management' }, { skill: 'Public Relations' } ]
+                };
+            } else if (resumeName === 'Software Developer') {
+                resumeData = {
+                    firstname: 'Alex',
+                    lastname: 'Ray',
+                    designation: 'Full Stack Developer',
+                    address: 'Seattle, WA',
+                    email: 'alex.ray@example.com',
+                    phoneno: '206-555-0101',
+                    summary: 'Innovative Full Stack Developer with 5+ years of experience in designing, developing, and deploying high-quality web applications. Proven ability to work with a team to deliver projects on time and to specification. Passionate about creating clean, efficient code and user-friendly interfaces.',
+                    achievements: [
+                        { achieve_title: 'Developer of the Quarter (Q2 2023)', achieve_description: 'Awarded for exceptional contributions to the flagship product, including a 20% performance improvement.' },
+                        { achieve_title: 'Hackathon Winner 2022', achieve_description: 'Led a team to win first place in a company-wide hackathon by building a real-time collaboration tool.' }
+                    ],
+                    experiences: [
+                        { exp_title: 'Full Stack Developer', exp_organization: 'Innovatech Solutions', exp_location: 'Seattle, WA', exp_start_date: '2020-07-01', exp_end_date: '2024-05-31', exp_description: 'Developed and maintained both front-end and back-end components for a large-scale SaaS application. Implemented a new RESTful API, improving data retrieval times by 30%.' },
+                        { exp_title: 'Junior Web Developer', exp_organization: 'CodeCrafters LLC', exp_location: 'Seattle, WA', exp_start_date: '2018-06-01', exp_end_date: '2020-06-30', exp_description: 'Assisted in the development of client websites using HTML, CSS, and JavaScript. Gained hands-on experience with the React library and version control (Git).' }
+                    ],
+                    educations: [
+                        { edu_school: 'University of Washington', edu_degree: 'Bachelor of Science in Computer Engineering', edu_city: 'Seattle, WA', edu_start_date: '2014-09-01', edu_end_date: '2018-06-30', edu_description: 'Graduated with honors. Senior thesis project involved developing a peer-to-peer file sharing application.' }
+                    ],
+                    projects: [
+                        { proj_title: 'Task Management App', proj_link: 'https://github.com/alexray/task-app', proj_description: 'A personal project to create a responsive task management application using Vue.js for the front-end and Firebase for the back-end services.' }
+                    ],
+                    skills: [
+                        { skill: 'JavaScript (ES6+)' },
+                        { skill: 'Python (Django)' },
+                        { skill: 'React & Vue.js' },
+                        { skill: 'Node.js & Express' },
+                        { skill: 'SQL & NoSQL (PostgreSQL, MongoDB)' },
+                        { skill: 'Docker & CI/CD' },
+                        { skill: 'Agile Methodologies' }
+                    ]
+                };
+            } else if (resumeName === 'UX Designer') {
+                resumeData = {
+                    firstname: 'Emily', lastname: 'Carter', designation: 'Lead UX/UI Designer', address: 'San Francisco, CA', email: 'emily.carter@example.com', phoneno: '415-555-0123', summary: 'Creative and user-centric Lead UX/UI Designer with a passion for crafting intuitive and engaging digital experiences. Over 7 years of experience leading design projects from concept to launch, specializing in user research, wireframing, prototyping, and usability testing.',
+                    achievements: [ { achieve_title: 'Webby Award Winner', achieve_description: 'Won "Best User Interface" for a mobile banking app that simplified financial management for users.' }, { achieve_title: 'User Retention Improvement', achieve_description: 'Increased user retention by 30% through a complete redesign of the product\'s onboarding flow.' } ],
+                    experiences: [ { exp_title: 'Lead UX/UI Designer', exp_organization: 'Creative Minds Studio', exp_location: 'San Francisco, CA', exp_start_date: '2020-03-01', exp_end_date: '2024-05-31', exp_description: 'Led the design of a complex B2B SaaS platform, reducing user error rates by 40%. Established and maintained the company\'s design system.' }, { exp_title: 'UX Designer', exp_organization: 'Digital Experiences Co.', exp_location: 'San Francisco, CA', exp_start_date: '2017-08-01', exp_end_date: '2020-02-29', exp_description: 'Conducted user research, created wireframes and prototypes, and performed usability testing for various client projects.' } ],
+                    educations: [ { edu_school: 'Rhode Island School of Design (RISD)', edu_degree: 'B.F.A. in Graphic Design', edu_city: 'Providence, RI', edu_start_date: '2013-09-01', edu_end_date: '2017-05-31', edu_description: 'Focused on interaction design and typography.' } ],
+                    projects: [ { proj_title: 'Healthcare Patient Portal', proj_link: 'https://behance.net/emily-carter/patient-portal', proj_description: 'Designed a user-friendly patient portal that allows users to easily access medical records, schedule appointments, and communicate with doctors.' } ],
+                    skills: [ { skill: 'Figma & Sketch' }, { skill: 'Adobe Creative Suite' }, { skill: 'User Research & Personas' }, { skill: 'Wireframing & Prototyping' }, { skill: 'Usability Testing' }, { skill: 'Design Systems' }, { skill: 'HTML/CSS' }, { skill: 'Agile Methodologies' } ]
+                };
+            } else if (resumeName === 'Data Scientist') {
+                resumeData = {
+                    firstname: 'Benjamin', lastname: 'Lee', designation: 'Senior Data Scientist', address: 'New York, NY', email: 'ben.lee@example.com', phoneno: '646-555-0187', summary: 'Analytical and strategic Senior Data Scientist with 6+ years of experience in machine learning, statistical modeling, and data visualization. Adept at translating complex data into actionable business insights to drive decision-making and performance.',
+                    achievements: [ { achieve_title: 'Forecasting Accuracy', achieve_description: 'Developed a predictive model that improved sales forecasting accuracy by 25%, leading to better inventory management.' }, { "achieve_title": "Published Researcher", "achieve_description": "Co-authored and published research in the Journal of Data Science on novel fraud detection techniques."} ],
+                    experiences: [ { exp_title: 'Senior Data Scientist', exp_organization: 'Data Insights Corp.', exp_location: 'New York, NY', exp_start_date: '2021-01-01', exp_end_date: '2024-05-31', exp_description: 'Built and deployed machine learning models for customer churn prediction and fraud detection. Collaborated with engineering teams to integrate models into production systems.' }, { exp_title: 'Data Analyst', exp_organization: 'Analytics Driven LLC', exp_location: 'New York, NY', exp_start_date: '2018-06-01', exp_end_date: '2020-12-31', exp_description: 'Performed exploratory data analysis and created dashboards to track key business metrics. Presented findings to stakeholders to support strategic decisions.' } ],
+                    educations: [ { edu_school: 'Stanford University', edu_degree: 'Ph.D. in Statistics', edu_city: 'Stanford, CA', edu_start_date: '2013-09-01', edu_end_date: '2018-05-31', edu_description: 'Dissertation focused on Bayesian methods for time series analysis.' } ],
+                    projects: [ { proj_title: 'Customer Churn Prediction Model', proj_link: 'https://github.com/ben-lee/churn-prediction', proj_description: 'Created a machine learning model using Python (scikit-learn) that predicts customer churn with 92% accuracy.' } ],
+                    skills: [ { skill: 'Python (pandas, scikit-learn)' }, { skill: 'R & SQL' }, { skill: 'Machine Learning & Deep Learning' }, { skill: 'TensorFlow & PyTorch' }, { skill: 'Data Visualization (Tableau)' }, { skill: 'Big Data (Spark, Hadoop)' }, { skill: 'Statistical Modeling' }, { skill: 'A/B Testing' } ]
+                };
+            } else if (resumeName === 'Project Manager') {
+                resumeData = {
+                    firstname: 'Olivia', lastname: 'Rodriguez', designation: 'Senior IT Project Manager (PMP)', address: 'Washington, D.C.', email: 'olivia.r@example.com', phoneno: '202-555-0145', summary: 'Certified Project Management Professional (PMP) with 9 years of experience leading complex IT projects from initiation to completion. Skilled in Agile and Scrum methodologies, stakeholder management, and risk mitigation to deliver projects on time and within budget.',
+                    achievements: [ { achieve_title: 'Ahead of Schedule Delivery', achieve_description: 'Successfully delivered a $5M software implementation project 2 weeks ahead of schedule and 10% under budget.' }, { achieve_title: 'Process Improvement Lead', achieve_description: 'Improved team velocity by 20% by introducing and coaching new Agile best practices and tools.' } ],
+                    experiences: [ { exp_title: 'Senior IT Project Manager', exp_organization: 'Tech Forward Inc.', exp_location: 'Washington, D.C.', exp_start_date: '2018-02-01', exp_end_date: '2024-05-31', exp_description: 'Managed a portfolio of 10+ projects simultaneously. Led daily stand-ups, sprint planning, and retrospective meetings.' }, { exp_title: 'Project Coordinator', exp_organization: 'Global Solutions', exp_location: 'Washington, D.C.', exp_start_date: '2015-06-01', exp_end_date: '2018-01-31', exp_description: 'Assisted in project planning and scheduling. Maintained project documentation and tracked progress against milestones.' } ],
+                    educations: [ { edu_school: 'University of Texas at Austin', edu_degree: 'MBA, Project Management', edu_city: 'Austin, TX', edu_start_date: '2013-08-01', edu_end_date: '2015-05-31', edu_description: 'Member of the Project Management Institute (PMI).' } ],
+                    projects: [ { proj_title: 'Cloud Infrastructure Upgrade', proj_link: 'https://example.com/cloud-upgrade-casestudy', proj_description: 'Managed the migration of on-premise servers to a cloud-based infrastructure (AWS), resulting in a 30% reduction in operational costs.' } ],
+                    skills: [ { skill: 'Agile & Scrum Methodologies' }, { skill: 'Project Scheduling & Budgeting' }, { skill: 'Risk Management' }, { skill: 'Stakeholder Communication' }, { skill: 'Jira, Confluence, Asana' }, { skill: 'PMP Certified' }, { skill: 'Change Management' }, { skill: 'Vendor Management' } ]
+                };
+            } else if (resumeName === 'Content Writer') {
+                resumeData = {
+                    firstname: 'Chloe', lastname: 'Davis', designation: 'Senior Content Strategist & Writer', address: 'Denver, CO', email: 'chloe.davis@example.com', phoneno: '720-555-0162', summary: 'Versatile and engaging Senior Content Strategist with 6+ years of experience creating high-quality content for B2B and B2C audiences. Expert in SEO copywriting, blog management, and developing content that drives traffic, engagement, and conversions.',
+                    achievements: [ { achieve_title: 'Viral Blog Post Series', achieve_description: 'Wrote a series of 5 blog posts that attracted over 500,000 unique visitors in 3 months.' }, { achieve_title: 'Organic Traffic Growth', achieve_description: 'Increased organic search traffic by 80% year-over-year through targeted keyword research and content optimization.' } ],
+                    experiences: [ { exp_title: 'Senior Content Strategist', exp_organization: 'Contentify Agency', exp_location: 'Denver, CO', exp_start_date: '2020-01-01', exp_end_date: '2024-05-31', exp_description: 'Developed and executed content strategies for various clients. Managed a team of freelance writers and edited all content before publication.' }, { exp_title: 'Copywriter', exp_organization: 'MarketMinds', exp_location: 'Denver, CO', exp_start_date: '2018-06-01', exp_end_date: '2019-12-31', exp_description: 'Wrote website copy, ad copy, and social media posts for B2C brands. Collaborated with designers to create visually appealing content.' } ],
+                    educations: [ { edu_school: 'New York University (NYU)', edu_degree: 'B.A. in Journalism', edu_city: 'New York, NY', edu_start_date: '2014-09-01', exp_end_date: '2018-05-31', edu_description: 'Editor for the university newspaper.' } ],
+                    projects: [ { proj_title: '"Future of Tech" E-book', proj_link: 'https://example.com/future-of-tech-ebook', proj_description: 'Researched and wrote a comprehensive 50-page e-book that generated over 2,000 downloads and 500 sales leads.' } ],
+                    skills: [ { skill: 'SEO Copywriting' }, { skill: 'Content Strategy' }, { skill: 'Blogging & Editing (WordPress)' }, { skill: 'Social Media Content Creation' }, { skill: 'Google Analytics & SEMrush' }, { skill: 'Storytelling' }, { skill: 'Email Marketing' }, { skill: 'AP Style' } ]
+                };
+            }
+            
+            // Store data in localStorage to be retrieved by resume.html
+            localStorage.setItem('resumeToEdit', JSON.stringify(resumeData));
+            
+            // Redirect to the resume editor page
+            setTimeout(() => {
+                hideLoading();
+                window.location.href = 'resume.html?edit=' + encodeURIComponent(resumeName);
+            }, 1500);
+        }
+
+        function downloadResume(resumeName) {
+            showMessage(`Preparing ${resumeName} resume for download...`, 'success');
+            showLoading();
+            
+            setTimeout(() => {
+                hideLoading();
+                showMessage(`${resumeName} resume downloaded successfully!`, 'success');
+                
+                // Simulate file download
+                const link = document.createElement('a');
+                link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(`${resumeName} Resume - Generated by Resume Builder`);
+                link.download = `${resumeName.toLowerCase().replace(' ', '_')}_resume.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 2000);
+        }
+
+        function duplicateResume(resumeName) {
+            showMessage(`Creating a copy of ${resumeName} resume...`, 'success');
+            showLoading();
+            
+            setTimeout(() => {
+                hideLoading();
+                showMessage(`${resumeName} resume duplicated successfully!`, 'success');
+                
+                // Add new card to the grid
+                addNewResumeCard(`Copy of ${resumeName} Resume`);
+            }, 1500);
+        }
+
+        function deleteResume(resumeName) {
+            if (confirm(`Are you sure you want to delete "${resumeName}" resume? This action cannot be undone.`)) {
+                showMessage(`Deleting ${resumeName} resume...`, 'success');
+                showLoading();
+                
+                setTimeout(() => {
+                    hideLoading();
+                    showMessage(`${resumeName} resume deleted successfully!`, 'success');
+                    
+                    // Remove the card with animation
+                    const card = event.target.closest('.resume-card');
+                    if (card) {
+                        card.style.transform = 'scale(0.8)';
+                        card.style.opacity = '0';
+                        setTimeout(() => {
+                            card.remove();
+                        }, 300);
+                    }
+                }, 1500);
+            }
+        }
+
+        function addNewResumeCard(title) {
+            const grid = document.querySelector('.resumes-grid');
+            const newCard = document.createElement('div');
+            newCard.className = 'resume-card';
+            newCard.style.opacity = '0';
+            newCard.style.transform = 'scale(0.8)';
+            
+            const today = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            newCard.innerHTML = `
+                <h3>${title}</h3>
+                <div class="resume-meta">
+                    <div><i class="fas fa-calendar"></i> Created: ${today}</div>
+                    <div><i class="fas fa-edit"></i> Last Updated: ${today}</div>
+                    <div><i class="fas fa-palette"></i> Template: Sidebar Left</div>
+                </div>
+                <div class="resume-actions">
+                    <button class="btn btn-primary" onclick="editResume('${title}')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-success" onclick="downloadResume('${title}')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn btn-warning" onclick="duplicateResume('${title}')">
+                        <i class="fas fa-copy"></i> Duplicate
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteResume('${title}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+            
+            grid.appendChild(newCard);
+            
+            // Animate in
+            setTimeout(() => {
+                newCard.style.opacity = '1';
+                newCard.style.transform = 'scale(1)';
+            }, 100);
+        }
+
+        function showMessage(message, type) {
+            const container = document.getElementById('messageContainer');
+            const div = document.createElement('div');
+            div.className = 'success-message';
+            div.textContent = message;
+            container.appendChild(div);
+            
+            setTimeout(() => {
+                div.style.opacity = '0';
+                div.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    if (div.parentNode) {
+                        div.parentNode.removeChild(div);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        function logout() {
+            showMessage('Logging out...', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+
+        // Initialize dashboard with smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.resume-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html> 
